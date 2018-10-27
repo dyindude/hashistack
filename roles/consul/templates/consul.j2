@@ -1,0 +1,13 @@
+{
+{-% if consul_server is true %}
+  "bootstrap": {{ consul_bootstrap }}
+{% endif %-}
+  "server": {{ consul_server }},
+  "datacenter": "{{ consul_datacenter }}",
+  "data_dir": "{{ consul_data_dir }}",
+  "ui_dir": "{{ consul_ui_dir }}",
+  "encrypt": "{{ consul_encrypt }}",
+  "log_level": "{{ consul_log_level }}",
+  "enable_syslog": {{ consul_enable_syslog }},
+  "start_join": [list, and realllyyy only need one, or maybe a hostname]
+}
