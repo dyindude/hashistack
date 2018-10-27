@@ -1,9 +1,15 @@
 ---
-- name: download/unpack consul
+- name: download consul
+  get_url:
+    url: "{{ consul_url }}"
+    dest: "/tmp/{{ consul_filename }}"
+    checksum: "sha256:{{ consul_sha256 }}"
+- name: unpack consul
   unarchive:
-    src: "{{ consul_url }}"
+    src: "/tmp/{{ consul_filename }}"
     dest: /usr/local/bin
     remote_src: yes
+    creates: /usr/local/bin/consul
 - name: create consul user
   user:
     name: "{{ consul_user }}"

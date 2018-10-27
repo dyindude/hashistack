@@ -1,5 +1,5 @@
 {
-{% if consul_server | bool %}
+{% if consul_server %}
   "bootstrap": {{ consul_bootstrap | lower }},
 {% endif %}
   "server": {{ consul_server | lower }},
@@ -8,6 +8,8 @@
   "ui_dir": "{{ consul_ui_dir }}",
   "encrypt": "{{ consul_encrypt }}",
   "log_level": "{{ consul_log_level }}",
-  "enable_syslog": {{ consul_enable_syslog }},
-  "start_join": [list, and realllyyy only need one, or maybe a hostname]
+{% if not consul_bootstrap %}
+  "start_join": [list, and realllyyy only need one, or maybe a hostname],
+{% endif %}
+  "enable_syslog": {{ consul_enable_syslog }}
 }

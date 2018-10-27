@@ -2,7 +2,10 @@
 consul_version: "1.3.0"
 consul_ui_version: 
 consul_arch: "linux_amd64"
-consul_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_{{ consul_arch }}.zip"
+consul_filename: "consul_{{ consul_version }}_{{ consul_arch }}.zip"
+consul_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/{{ consul_filename }}"
+consul_sha_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_SHA256SUMS"
+consul_sha256: "{{ (lookup('url', consul_sha_url) | regex_search('([a-f0-9]{64}  consul_' + consul_version + '_' + consul_arch + '.zip),')).split()[0] }}"
 consul_ui_url:
 consul_user: "consul"
 consul_configdir: "/etc/consul.d"
