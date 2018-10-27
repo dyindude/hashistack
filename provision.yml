@@ -3,6 +3,6 @@
     consul_bootstrap: true
   roles:
   - role: consul
-- hosts: node1,node2,node0
-  roles:
-  - role: consul
+#- hosts: node1,node2,node0
+#  roles:
+#  - role: consul

@@ -1,8 +1,8 @@
 {
-{-% if consul_server is true %}
-  "bootstrap": {{ consul_bootstrap }}
-{% endif %-}
-  "server": {{ consul_server }},
+{% if consul_server | bool %}
+  "bootstrap": {{ consul_bootstrap | lower }},
+{% endif %}
+  "server": {{ consul_server | lower }},
   "datacenter": "{{ consul_datacenter }}",
   "data_dir": "{{ consul_data_dir }}",
   "ui_dir": "{{ consul_ui_dir }}",

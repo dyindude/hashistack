@@ -10,9 +10,9 @@
 - name: template consul configuration
   template:
     src: consul.j2
-    dest: /etc/consul.d/consul.json
-- name: template consul systemd scripts
-- name: start consul (bootstrap)
-- name: start consul (join cluster)
-- name: start consul (unbootstrap)
-- name: provision dns names, KV, etc
+    dest: /etc/consul.json
+#- name: template consul systemd scripts
+#- name: start consul (bootstrap)
+#- name: start consul (join cluster)
+#- name: start consul (unbootstrap)
+#- name: provision dns names, KV, etc

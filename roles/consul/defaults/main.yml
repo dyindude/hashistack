@@ -8,7 +8,7 @@ consul_user: "consul"
 consul_configdir: "/etc/consul.d"
 consul_server: true
 consul_datacenter: "dc1"
-consul_datadir: "/var/consul"
+consul_data_dir: "/var/consul"
 consul_ui_dir: "/var/consul/dist"
 consul_encrypt: "raaaaaaaand per run"
 consul_log_level: "INFO"
