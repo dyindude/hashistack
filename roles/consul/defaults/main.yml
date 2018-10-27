@@ -13,7 +13,7 @@ consul_server: true
 consul_datacenter: "dc1"
 consul_data_dir: "/var/consul"
 consul_ui_dir: "/var/consul/dist"
-consul_encrypt: "raaaaaaaand per run"
+consul_encrypt: "HQBfFob3L6AqoTkLfS5E/A==" #todo - generate on new run?
 consul_log_level: "INFO"
 consul_enable_syslog: true
 consul_bootstrap: false

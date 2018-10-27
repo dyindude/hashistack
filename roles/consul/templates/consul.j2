@@ -11,5 +11,5 @@
 {% if not consul_bootstrap %}
   "start_join": [list, and realllyyy only need one, or maybe a hostname],
 {% endif %}
-  "enable_syslog": {{ consul_enable_syslog }}
+  "enable_syslog": {{ consul_enable_syslog | lower }}
 }

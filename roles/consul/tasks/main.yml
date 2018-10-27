@@ -7,16 +7,37 @@
 - name: unpack consul
   unarchive:
     src: "/tmp/{{ consul_filename }}"
-    dest: /usr/local/bin
+    dest: /usr/local/sbin
     remote_src: yes
-    creates: /usr/local/bin/consul
+    creates: /usr/local/sbin/consul
 - name: create consul user
   user:
     name: "{{ consul_user }}"
+- name: create consul config directory
+  file:
+    path: "{{ consul_configdir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
 - name: template consul configuration
   template:
     src: consul.j2
-    dest: /etc/consul.json
+    dest: "{{ consul_configdir }}/config.json"
+- name: template consul service script
+  template:
+    src: consul.service.j2
+    dest: /lib/systemd/system/consul.service
+- name: template consul service configuration
+  template:
+    src: consul.default.j2
+    dest: /etc/default/consul
+- name: enable and start consul service
+  systemd:
+    name: consul.service
+    enabled: yes
+    state: started
+    daemon_reload: yes
 #- name: template consul systemd scripts
 #- name: start consul (bootstrap)
 #- name: start consul (join cluster)
