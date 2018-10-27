@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/xenial64" #stop using ubuntu bro lol
+  config.vm.box = "debian/stretch64"
   config.vm.network "private_network", type: "dhcp"
   config.vm.define "node0", primary: true do |n|
       n.vm.hostname = "node0"
