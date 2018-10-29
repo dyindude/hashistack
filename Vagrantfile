@@ -16,6 +16,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell",
       inline: "apt-get update && apt-get install -y python-minimal unzip"
   config.vm.provision "ansible" do |ansible|
+    ansible.limit = 'all'
     ansible.playbook = "provision.yml"
     ansible.become = true
     ansible.raw_arguments = ["--extra-vars", "ran_from_vagrant='true'"]
