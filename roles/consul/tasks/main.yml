@@ -24,20 +24,17 @@
   template:
     src: consul.j2
     dest: "{{ consul_configdir }}/config.json"
+  notify: restart consul
 - name: template consul service script
   template:
     src: consul.service.j2
     dest: /lib/systemd/system/consul.service
+  notify: reload systemd
 - name: template consul service configuration
   template:
     src: consul.default.j2
     dest: /etc/default/consul
-- name: enable and start consul service
-  systemd:
-    name: consul.service
-    enabled: yes
-    state: started
-    daemon_reload: yes
+  notify: restart consul
 #- name: template consul systemd scripts
 #- name: start consul (bootstrap)
 #- name: start consul (join cluster)

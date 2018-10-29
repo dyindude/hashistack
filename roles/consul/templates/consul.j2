@@ -9,7 +9,7 @@
   "encrypt": "{{ consul_encrypt }}",
   "log_level": "{{ consul_log_level }}",
 {% if not consul_bootstrap %}
-  "start_join": [list, and realllyyy only need one, or maybe a hostname],
+  "start_join": [{% for host in groups['all'] %}"{{ hostvars[host]['ansible_default_ipv4']['address'] }}"{% if not loop.last %},{% endif %}{% endfor %}],
 {% endif %}
   "enable_syslog": {{ consul_enable_syslog | lower }}
 }
