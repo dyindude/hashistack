@@ -13,3 +13,6 @@
     consul_bootstrap: false
   roles:
   - role: consul
+- hosts: node0,node1,node2
+  roles:
+  - role: vault

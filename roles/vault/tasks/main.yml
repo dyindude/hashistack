@@ -1,0 +1,37 @@
+---
+- name: download vault
+  get_url:
+    url: "{{ vault_url }}"
+    dest: "/tmp/{{ vault_filename }}"
+    checksum: "sha256:{{ vault_sha256 }}"
+- name: unpack vault
+  unarchive:
+    src: "/tmp/{{ vault_filename }}"
+    dest: /usr/local/sbin
+    remote_src: yes
+    creates: /usr/local/sbin/vault
+- name: create vault user
+  user:
+    name: "{{ vault_user }}"
+- name: create vault config directory
+  file:
+    path: "{{ vault_configdir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+- name: template vault configuration
+  template:
+    src: vault.j2
+    dest: "{{ vault_configdir }}/config.hcl"
+  notify: restart vault
+- name: template vault service script
+  template:
+    src: vault.service.j2
+    dest: /lib/systemd/system/vault.service
+  notify: reload systemd
+#- name: template vault service configuration
+#  template:
+#    src: vault.default.j2
+#    dest: /etc/default/vault
+#  notify: restart vault

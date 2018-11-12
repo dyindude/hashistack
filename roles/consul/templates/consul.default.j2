@@ -1,1 +1,1 @@
-OPTIONS="-client={{ ansible_default_ipv4.address }} -bind={{ ansible_default_ipv4.address }}{{ consul_ui | ternary(' -ui', '') }}"
+OPTIONS="-client={{ ansible_default_ipv4.address }} -client=127.0.0.1 -bind={{ ansible_default_ipv4.address }}{{ consul_ui | ternary(' -ui', '') }}"

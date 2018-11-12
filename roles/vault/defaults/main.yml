@@ -1,0 +1,10 @@
+---
+vault_version: "0.11.4"
+vault_ui: true
+vault_arch: "linux_amd64"
+vault_filename: "vault_{{ vault_version }}_{{ vault_arch }}.zip"
+vault_url: "https://releases.hashicorp.com/vault/{{ vault_version }}/{{ vault_filename }}"
+vault_sha_url: "https://releases.hashicorp.com/vault/{{ vault_version }}/vault_{{ vault_version }}_SHA256SUMS"
+vault_sha256: "{{ (lookup('url', vault_sha_url) | regex_search('([a-f0-9]{64}  vault_' + vault_version + '_' + vault_arch + '.zip),')).split()[0] }}"
+vault_user: "vault"
+vault_configdir: "/etc/vault.d"
