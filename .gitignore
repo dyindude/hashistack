@@ -2,3 +2,4 @@
 *cloudimg-console.log
 *.retry
 workdir
+roles/dyindude.*
