@@ -1,4 +1,9 @@
 ---
+- name: ensure unzip is installed
+  package:
+    name: unzip
+    state: present
+  become: yes
 - name: download consul
   get_url:
     url: "{{ consul_url }}"

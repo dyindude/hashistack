@@ -1,11 +1,28 @@
 - hosts: node0
   vars:
     consul_bootstrap: true
+    cfssl_docker: false
   roles:
+  - role: dyindude.golang
+  - role: dyindude.cfssl
   - role: consul
+- hosts: node0
+  tasks:
+    - name: copy pki chain from node0
+      synchronize:
+        mode: pull
+        src: /home/vagrant/workdir/
+        dest: workdir/
+        recursive: yes
 - hosts: node1,node2
   vars:
     consul_bootstrap: false
+  tasks:
+    - name: copy pki chain to node1 and node2
+      synchronize:
+        src: workdir/
+        dest: /home/vagrant/workdir/
+        recursive: yes
   roles:
   - role: consul
 - hosts: node0

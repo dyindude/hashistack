@@ -1,0 +1,43 @@
+---
+# using https://github.com/docker-library/golang/blob/f441baf15c3e7397c2c3f6f712b4d4ba374f1948/1.11/stretch/Dockerfile as a reference
+- name: install package dependencies
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - g++
+    - gcc
+    - libc6-dev
+    - make
+    - pkg-config
+    - git
+  become: yes
+- name: download golang
+  get_url:
+    url: "{{ golang_url }}"
+    dest: "/tmp/{{ golang_filename }}"
+    checksum: "sha256:{{ golang_sha256 }}"
+  become: yes
+- name: unarchive golang
+  unarchive:
+    src: "/tmp/{{ golang_filename }}"
+    dest: "/usr/local"
+    remote_src: yes
+  become: yes
+- name: create go workdirs
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ golang_gopath }}/src"
+    - "{{ golang_gopath }}/bin"
+  become: yes
+- name: set up /etc/profile.d/gopath.sh
+  lineinfile:
+    path: /etc/profile.d/gopath.sh
+    create: yes
+    line: "{{ item }}"
+  with_items:
+    - "export GOPATH=\"{{ golang_gopath }}\""
+    - "export PATH=\"{{ golang_gopath }}/bin:/usr/local/go/bin:$PATH\""
+  become: yes

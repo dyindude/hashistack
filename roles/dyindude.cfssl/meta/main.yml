@@ -1,0 +1,22 @@
+galaxy_info:
+  author: dyindude
+  description: Manage certificate chain with cfssl. Optionally install cfssl instead of running it from docker.
+  role_name: cfssl
+  company: dyindude.net
+  issue_tracker_url: "https://github.com/dyindude/ansible-role-cfssl"
+  license: BSD
+  min_ansible_version: 2.6.5
+  platforms:
+    - name: Ubuntu
+      versions:
+        - bionic
+        - xenial
+    - name: Debian
+      versions:
+        - stretch
+        - jessie
+  galaxy_tags:
+    - cfssl
+    - debian
+    - ubuntu
+dependencies: []

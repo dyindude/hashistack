@@ -1,0 +1,55 @@
+---
+- name: ensure python-openssl is installed (required for cert validation)
+  package:
+    name: python-openssl
+    state: present
+- name: install cfssl with go
+  shell: "go get -u {{ item }}"
+  environment:
+    GOPATH: "/go"
+    PATH: "/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  when: not cfssl_docker
+  with_items:
+    - github.com/cloudflare/cfssl/cmd/cfssl
+    - github.com/cloudflare/cfssl/cmd/cfssljson
+- name: ensure output directory exists
+  file:
+    path: "{{ cfssl_output }}"
+    state: directory
+- name: write out ca template
+  template:
+    src: cfssl.json
+    dest: "{{ cfssl_output }}/{{ cfssl_domain }}.json"
+  with_items:
+    - "{{ cfssl_hosts }}"
+- name: copy ca config template
+  template:
+    src: config.json
+    dest: "{{ cfssl_output }}/config.json"
+- name: manage ca certificate
+  block:
+    - name: check if ca cert has expired
+      openssl_certificate:
+        path: "{{ cfssl_output }}/ca.{{ cfssl_domain }}.pem"
+        has_expired: False
+        valid_at: "{{ cfssl_valid_at }}"
+  rescue:
+    - name: generate ca cert/key
+      shell: "{{ cfssl }} genkey -initca workdir/output/{{ cfssl_domain }}.json | {{ cfssljson }} -bare workdir/output/ca.{{ cfssl_domain }}"
+
+- name: manage host certificate
+  block:
+    - name: check if cert has expired
+      openssl_certificate:
+        path: "{{ cfssl_output }}/{{ cfssl_filename }}.pem"
+        has_expired: False
+        valid_at: "{{ cfssl_valid_at }}"
+    - name: check if our ca cert is valid for this cert
+      shell: "[[ $(openssl verify -CAfile {{ cfssl_output }}/ca.{{ cfssl_domain }}.pem {{ cfssl_output }}/{{ cfssl_filename }}.pem |& grep OK | wc -c) -ne 0 ]]"
+      args:
+        executable: /bin/bash
+      changed_when: False
+  rescue:
+    - name: generate host certs/keys
+      shell: "{{ cfssl }} gencert -ca workdir/output/ca.{{ cfssl_domain }}.pem -ca-key workdir/output/ca.{{ cfssl_domain }}-key.pem -cn={{ cfssl_hosts | map('regex_replace','$','.' + cfssl_domain) | list | first }} -hostname={{ (cfssl_hosts_canonical + ((cfssl_hosts | map('regex_replace','$','.' + cfssl_domain)) | list)) | join(',') }} -config=workdir/output/config.json -profile={{ cfssl_profile }} workdir/output/{{ cfssl_domain }}.json | {{ cfssljson }} -bare workdir/output/{{ cfssl_filename }}"
+

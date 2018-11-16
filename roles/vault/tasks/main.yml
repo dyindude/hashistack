@@ -30,8 +30,7 @@
     src: vault.service.j2
     dest: /lib/systemd/system/vault.service
   notify: reload systemd
-#- name: template vault service configuration
-#  template:
-#    src: vault.default.j2
-#    dest: /etc/default/vault
-#  notify: restart vault
+- name: flush handlers so that vault is ready for vault init
+  meta: flush_handlers
+- import_tasks: init.yml
+  tags: [ 'never', 'init' ]

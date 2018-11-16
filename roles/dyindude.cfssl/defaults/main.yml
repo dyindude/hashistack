@@ -1,0 +1,22 @@
+---
+cfssl_docker: true
+cfssl: "{{ cfssl_docker | default(false) | bool | ternary('docker run --rm -v $(pwd):/go/src/github.com/cloudflare/cfssl/workdir cfssl/cfssl', '/go/bin/cfssl') }}"
+cfssljson: "{{ cfssl_docker | default(false) | bool | ternary('docker run -i --rm -v $(pwd):/go/src/github.com/cloudflare/cfssl/workdir --entrypoint=cfssljson cfssl/cfssl', '/go/bin/cfssljson') }}"
+cfssl_output: "{{ cfssl_docker | default(false) | bool | ternary('output', 'workdir/output') }}"
+cfssl_date_command: "{{ (ansible_os_family == 'Darwin') | ternary('gdate', 'date') }}"
+cfssl_valid_at: "{{ lookup('pipe', cfssl_date_command + ' --date=30days +%Y%m%d%H%M%s%z') }}"
+cfssl_force_regenerate: false
+cfssl_hosts:
+  - "www"
+cfssl_filename: "{{ ((cfssl_hosts | first) == '*') | ternary('wildcard', cfssl_hosts | first) + '.' + cfssl_domain }}"
+cfssl_hosts_canonical: "{{ cfssl_canonical | default(false) | bool | ternary([cfssl_domain], []) }}"
+cfssl_canonical: false
+cfssl_algo: "rsa"
+cfssl_size: 4096
+cfssl_country: "Some Country"
+cfssl_locality: "Some City"
+cfssl_organization: "Some Org"
+cfssl_ou: "Some OU"
+cfssl_state: "Some State"
+cfssl_domain: "example.com"
+cfssl_profile: "server"

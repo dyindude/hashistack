@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  remote_user: root
+  vars:
+    cfssl: cfssl
+    cfssljson: cfssljson
+    cfssl_output: "workdir/output"
+  roles:
+    - dyindude.cfssl

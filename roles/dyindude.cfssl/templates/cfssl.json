@@ -1,0 +1,16 @@
+{
+    "hosts": [ "ca.{{ cfssl_domain }}" ],
+    "key": {
+        "algo": "{{ cfssl_algo }}",
+        "size": {{ cfssl_size }}
+    },
+    "names": [
+        {
+            "C":  "{{ cfssl_country }}",
+            "L":  "{{ cfssl_locality }}",
+            "O":  "{{ cfssl_organization }}",
+            "OU": "{{ cfssl_ou }}",
+            "ST": "{{ cfssl_state }}"
+        }
+    ]
+}

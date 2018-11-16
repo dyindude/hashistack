@@ -1,0 +1,7 @@
+---
+golang_gopath: "/go"
+golang_version: "1.11.2"
+golang_arch: "linux-amd64"
+golang_filename: "go{{ golang_version }}.{{ golang_arch }}.tar.gz"
+golang_url: "https://dl.google.com/go/{{ golang_filename }}"
+golang_sha256: "{{ lookup('url', golang_url + '.sha256') }}"
