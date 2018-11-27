@@ -19,9 +19,32 @@
 - shell: vault operator unseal {{ vault_init.stdout_lines[0].split()[3] }}
   environment:
     VAULT_ADDR: "http://127.0.0.1:8200"
+    VAULT_TOKEN: "{{ vault_init.stdout_lines[6].split()[3] }}"
 - shell: vault operator unseal {{ vault_init.stdout_lines[1].split()[3] }}
   environment:
     VAULT_ADDR: "http://127.0.0.1:8200"
+    VAULT_TOKEN: "{{ vault_init.stdout_lines[6].split()[3] }}"
 - shell: vault operator unseal {{ vault_init.stdout_lines[2].split()[3] }}
   environment:
     VAULT_ADDR: "http://127.0.0.1:8200"
+    VAULT_TOKEN: "{{ vault_init.stdout_lines[6].split()[3] }}"
+- name: enable pki engine in vault
+  shell: vault secrets enable pki
+  environment:
+    VAULT_ADDR: "http://127.0.0.1:8200"
+    VAULT_TOKEN: "{{ vault_init.stdout_lines[6].split()[3] }}"
+- name: tune pki engine in vault
+  shell: vault secrets tune -max-lease-ttl=87600h pki
+  environment:
+    VAULT_ADDR: "http://127.0.0.1:8200"
+    VAULT_TOKEN: "{{ vault_init.stdout_lines[6].split()[3] }}"
+- name: write vault root ca
+  shell: vault write pki/root/generate/internal common_name=internal.com ttl=87600h
+  environment:
+    VAULT_ADDR: "http://127.0.0.1:8200"
+    VAULT_TOKEN: "{{ vault_init.stdout_lines[6].split()[3] }}"
+- name: write pki urls
+  shell: vault write pki/config/urls issuing_certificates="http://127.0.0.1:8200/v1/pki/ca" crl_distribution_points="http://127.0.0.1:8200/v1/pki/crl"
+  environment:
+    VAULT_ADDR: "http://127.0.0.1:8200"
+    VAULT_TOKEN: "{{ vault_init.stdout_lines[6].split()[3] }}"
