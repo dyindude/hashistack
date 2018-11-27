@@ -1,3 +1,7 @@
+- name: install supplementary tools
+  package:
+    name: jq
+    state: present
 - name: register vault operator init output
   shell: vault operator init
   register: vault_init
@@ -45,6 +49,21 @@
     VAULT_TOKEN: "{{ vault_init.stdout_lines[6].split()[3] }}"
 - name: write pki urls
   shell: vault write pki/config/urls issuing_certificates="http://127.0.0.1:8200/v1/pki/ca" crl_distribution_points="http://127.0.0.1:8200/v1/pki/crl"
+  environment:
+    VAULT_ADDR: "http://127.0.0.1:8200"
+    VAULT_TOKEN: "{{ vault_init.stdout_lines[6].split()[3] }}"
+- name: enable pki_int
+  shell: vault secrets enable -path=pki_int pki
+  environment:
+    VAULT_ADDR: "http://127.0.0.1:8200"
+    VAULT_TOKEN: "{{ vault_init.stdout_lines[6].split()[3] }}"
+- name: tune pki_int
+  shell: vault secrets tune -max-lease-ttl=43800h pki_int
+  environment:
+    VAULT_ADDR: "http://127.0.0.1:8200"
+    VAULT_TOKEN: "{{ vault_init.stdout_lines[6].split()[3] }}"
+- name: write/sign stuff
+  shell: vault write -format=json pki_int/intermediate/generate/internal common_name="example.com Intermediate Authority" ttl="43800h" | jq -r '.data.csr' | vault write -format=json pki/root/sign-intermediate csr=- format=pem_bundle | jq  -r '.data.certificate' | vault write pki_int/intermediate/set-signed certificate=-
   environment:
     VAULT_ADDR: "http://127.0.0.1:8200"
     VAULT_TOKEN: "{{ vault_init.stdout_lines[6].split()[3] }}"
